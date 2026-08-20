@@ -1,0 +1,62 @@
+---
+import { Image } from 'astro:assets';
+import logoBlanco from '../assets/brand/logo-nav-blanco.svg';
+import tooth from '../assets/brand/tooth.svg?raw';
+import { clinica, waLink } from '../data/clinica';
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+const wa = waLink(t.whatsapp.cita);
+const year = new Date().getFullYear();
+---
+
+<section class="grain relative overflow-hidden bg-deep text-white">
+  <div class="absolute inset-0 bg-[radial-gradient(60rem_40rem_at_50%_120%,#0b7482_0%,transparent_60%)]"></div>
+  <!-- Marca de agua del diente: cierra el motivo (derecha, sobre fondo oscuro) -->
+  <div class="tooth-mark on-dark -right-16 top-4" set:html={tooth} data-parallax-slow />
+
+  <div class="relative mx-auto max-w-4xl px-5 py-16 sm:py-24 text-center lg:py-32">
+    <h2 class="display text-[clamp(2.2rem,6vw,4rem)]" data-reveal set:html={t.cta.titulo} />
+    <p class="mx-auto mt-6 max-w-xl text-lg text-white/70" data-reveal>{t.cta.sub}</p>
+    <div class="mt-10 flex flex-wrap items-center justify-center gap-4" data-reveal>
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-primary !px-8 !py-4 !text-base">
+        <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1a16 16 0 0 1-1.6-.6c-2.8-1.2-4.7-4.1-4.8-4.3-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.4l.9 2.2c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.1.3.7 1.2 1.6 1.9 1.1 1 2 1.3 2.3 1.4.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .7-.2 1.1Z"/></svg>
+        {t.cta.btnWhatsapp}
+      </a>
+      <a href={`tel:${clinica.telefono}`} class="btn btn-ghost">{t.cta.btnLlamar}</a>
+    </div>
+  </div>
+
+  <footer class="relative border-t border-white/10">
+    <div class="mx-auto max-w-6xl px-5 py-10 lg:px-8">
+      <div class="flex flex-wrap items-center justify-between gap-6">
+        <Image src={logoBlanco} alt={clinica.nombre} class="h-11 w-auto" />
+        <nav aria-label={t.cta.ariaFooter}>
+          <ul class="flex flex-wrap gap-6 text-sm text-white/60">
+            {
+              t.cta.footerLinks.map((l) => (
+                <li>
+                  <a href={l.href} class="link-under hover:text-white">
+                    {l.label}
+                  </a>
+                </li>
+              ))
+            }
+          </ul>
+        </nav>
+        <div class="flex items-center gap-3">
+          <a href={clinica.facebook} target="_blank" rel="noopener" aria-label={t.cta.ariaFacebook} class="grid size-10 place-items-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-aqua-300 hover:text-aqua-300">
+            <svg class="size-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7v-2.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.4V14h2.7v8h3.4Z"/></svg>
+          </a>
+          <a href={clinica.tiktok} target="_blank" rel="noopener" aria-label={t.cta.ariaTiktok} class="grid size-10 place-items-center rounded-full border border-white/15 text-white/70 transition-colors hover:border-aqua-300 hover:text-aqua-300">
+            <svg class="size-4.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 3c.4 2 1.7 3.4 3.9 3.6v3c-1.5 0-2.8-.5-3.9-1.3v6.3c0 3.5-2.5 5.9-5.7 5.9A5.6 5.6 0 0 1 5.2 15c0-3.3 2.7-5.7 6.1-5.5v3.1c-.3-.1-.7-.2-1.1-.2-1.5 0-2.7 1.2-2.7 2.7 0 1.6 1.2 2.8 2.7 2.8s2.8-1.2 2.8-2.9V3h3.6Z"/></svg>
+          </a>
+        </div>
+      </div>
+      <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/40">
+        <p>{t.contacto.direccion}, {t.contacto.ciudadPais}</p>
+        <p>© {year} {clinica.nombre}. {t.cta.derechos}</p>
+      </div>
+    </div>
+  </footer>
+</section>

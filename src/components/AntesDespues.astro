@@ -1,0 +1,46 @@
+---
+import { Image } from 'astro:assets';
+import caso1 from '../assets/photos/antes-despues-1.jpg';
+import caso2 from '../assets/photos/antes-despues-2.jpg';
+import casoInfantil from '../assets/photos/antes-despues-infantil.jpg';
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+const fotos = [caso1, caso2, casoInfantil];
+---
+
+<section id="resultados" class="scroll-mt-24 bg-ice">
+  <div class="mx-auto max-w-6xl px-5 py-16 sm:py-24 lg:px-8 lg:py-32">
+    <div class="flex flex-wrap items-end justify-between gap-6">
+      <div class="max-w-2xl">
+        <p class="eyebrow" data-reveal>{t.resultados.eyebrow}</p>
+        <h2 class="display mt-4 text-[clamp(2rem,4.5vw,3.2rem)]" data-reveal set:html={t.resultados.titulo} />
+        <p class="mt-5 text-ink-soft lg:text-lg" data-reveal>{t.resultados.sub}</p>
+      </div>
+    </div>
+
+    <div class="mt-12 grid gap-6 md:grid-cols-3">
+      {
+        t.resultados.casos.map((c, i) => (
+          <figure class="group overflow-hidden rounded-3xl bg-surface shadow-card transition-all duration-500 hover:-translate-y-1.5 hover:shadow-lift" data-reveal data-delay={String(i * 0.1)}>
+            <div class="overflow-hidden">
+              <Image
+                src={fotos[i]}
+                alt={`${t.resultados.altPrefijo}: ${c.titulo}`}
+                class="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                widths={[400, 700]}
+                sizes="(min-width: 768px) 22rem, 90vw"
+              />
+            </div>
+            <figcaption class="p-6">
+              <p class="font-display text-lg font-medium text-teal-900 dark:text-aqua-300">{c.titulo}</p>
+              <p class="mt-2 text-sm leading-relaxed text-ink-soft">{c.texto}</p>
+            </figcaption>
+          </figure>
+        ))
+      }
+    </div>
+
+    <p class="mt-6 text-xs text-ink-soft/70" data-reveal>{t.resultados.disclaimer}</p>
+  </div>
+</section>

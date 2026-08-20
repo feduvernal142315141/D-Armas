@@ -1,0 +1,33 @@
+---
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+---
+
+<section id="faq" class="scroll-mt-24 bg-ice">
+  <div class="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:px-8 lg:py-32">
+    <div>
+      <p class="eyebrow" data-reveal>{t.faq.eyebrow}</p>
+      <h2 class="display mt-4 text-[clamp(2rem,4vw,3rem)]" data-reveal set:html={t.faq.titulo} />
+      <p class="mt-5 text-ink-soft" data-reveal>{t.faq.sub}</p>
+    </div>
+
+    <div class="space-y-3">
+      {
+        t.faq.items.map((f, i) => (
+          <details class="faq group rounded-2xl bg-surface px-6 shadow-card" name="faq" data-reveal data-delay={String(i * 0.05)}>
+            <summary class="flex items-center justify-between gap-4 py-5 font-semibold">
+              {f.pregunta}
+              <span class="faq-icon inline-flex size-8 shrink-0 items-center justify-center rounded-full bg-ice text-teal-500 dark:text-aqua-300">
+                <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" />
+                </svg>
+              </span>
+            </summary>
+            <p class="pb-6 leading-relaxed text-ink-soft">{f.respuesta}</p>
+          </details>
+        ))
+      }
+    </div>
+  </div>
+</section>

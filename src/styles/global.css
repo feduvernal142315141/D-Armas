@@ -1,0 +1,464 @@
+@import 'tailwindcss';
+
+/* Variante dark controlada por atributo (toggle manual con persistencia) */
+@custom-variant dark (&:where([data-theme='dark'], [data-theme='dark'] *));
+
+@theme {
+  /* Marca D'Armas — código cromático del manual */
+  --color-deep: #043a42; /* derivado oscuro para fondos */
+  --color-teal-900: #065663;
+  --color-teal-700: #0b7482;
+  --color-teal-500: #1b98a6;
+  --color-aqua-300: #5bd8e0;
+  --color-ice: #e8f4f5;
+  --color-paper: #f6fafa;
+  --color-surface: #ffffff;
+  --color-ink: #12333a;
+  --color-ink-soft: #47646b;
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Fraunces Variable', Georgia, 'Times New Roman', serif;
+
+  --shadow-lift: 0 24px 48px -12px rgb(4 58 66 / 0.18);
+  --shadow-card: 0 10px 30px -10px rgb(4 58 66 / 0.12);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+:root {
+  color-scheme: light;
+}
+
+/* ── Modo oscuro: paleta teal profunda de la marca ──── */
+[data-theme='dark'] {
+  color-scheme: dark;
+  --color-paper: #06191e;
+  --color-ice: #0a2329;
+  --color-surface: #0d2a31;
+  --color-ink: #e6f2f3;
+  --color-ink-soft: #9db6bb;
+  --shadow-lift: 0 24px 48px -12px rgb(0 0 0 / 0.5);
+  --shadow-card: 0 10px 30px -10px rgb(0 0 0 / 0.4);
+}
+[data-theme='dark'] .display em {
+  color: var(--color-aqua-300);
+}
+
+/* Barrido circular del cambio de tema (View Transitions) */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(root) {
+  z-index: 1;
+}
+::view-transition-new(root) {
+  z-index: 2;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-aqua-300);
+  color: var(--color-teal-900);
+}
+
+/* ── Tipografía display ─────────────────────────────── */
+.display {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 100;
+  font-weight: 560;
+  letter-spacing: -0.02em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+.display em {
+  font-style: italic;
+  font-weight: 480;
+  color: var(--color-teal-500);
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-teal-500);
+}
+.eyebrow::before {
+  content: '';
+  width: 2rem;
+  height: 1.5px;
+  background: var(--color-aqua-300);
+}
+
+/* ── Botones ────────────────────────────────────────── */
+/* En @layer components para que las utilidades de Tailwind
+   (hidden, w-full, etc.) puedan sobreescribir al .btn */
+@layer components {
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.95rem 1.9rem;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 0.45s var(--ease-out-expo),
+    box-shadow 0.45s var(--ease-out-expo),
+    color 0.3s ease;
+}
+.btn:active {
+  transform: scale(0.97);
+}
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: currentColor;
+  opacity: 0;
+  transform: translateY(101%);
+  transition: transform 0.45s var(--ease-out-expo), opacity 0.2s;
+}
+.btn-primary {
+  background: var(--color-aqua-300);
+  color: var(--color-teal-900);
+  box-shadow: 0 8px 24px -8px rgb(91 216 224 / 0.55);
+}
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px -8px rgb(91 216 224 / 0.65);
+}
+.btn-ghost {
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.4);
+  backdrop-filter: blur(6px);
+}
+.btn-ghost:hover {
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9);
+  transform: translateY(-2px);
+}
+.btn-dark {
+  background: var(--color-teal-900);
+  color: #fff;
+  box-shadow: var(--shadow-card);
+}
+.btn-dark:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lift);
+}
+/* Outline que se adapta al tema (hero adaptativo) */
+.btn-outline {
+  color: var(--color-teal-900);
+  box-shadow: inset 0 0 0 1.5px rgb(6 86 99 / 0.35);
+}
+.btn-outline:hover {
+  box-shadow: inset 0 0 0 1.5px var(--color-teal-900);
+  transform: translateY(-2px);
+}
+[data-theme='dark'] .btn-outline {
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.4);
+  backdrop-filter: blur(6px);
+}
+[data-theme='dark'] .btn-outline:hover {
+  box-shadow: inset 0 0 0 1.5px rgb(255 255 255 / 0.9);
+}
+}
+
+/* ── Marquee ────────────────────────────────────────── */
+.marquee {
+  display: flex;
+  overflow: hidden;
+  gap: 3rem;
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 3rem;
+  min-width: 100%;
+  animation: marquee 32s linear infinite;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(calc(-100% - 3rem));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee-track {
+    animation: none;
+  }
+}
+
+/* ── Reveals (estado inicial solo si hay JS y sin reduced motion) ── */
+@media (prefers-reduced-motion: no-preference) {
+  html.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(32px);
+  }
+  html.js [data-reveal='fade'] {
+    transform: none;
+  }
+  html.js .hero-seq {
+    opacity: 0;
+  }
+}
+
+/* ── Menú móvil o galería abiertos: bloquear scroll y ocultar docks ── */
+html.menu-open,
+html.menu-open body,
+html.galeria-open,
+html.galeria-open body {
+  overflow: hidden;
+}
+html.menu-open [data-dock],
+html.galeria-open [data-dock] {
+  opacity: 0;
+  pointer-events: none;
+}
+[data-dock] {
+  transition: opacity 0.3s ease;
+}
+
+/* ── Tarjetas "spotlight" (.spot) — lógica en scripts/spotlight.ts ──
+   Borde de luz que sigue al puntero + arco cónico que gira + halo interior. */
+@property --ang {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.spot-grid {
+  perspective: 1200px;
+}
+.spot {
+  --mx: 50%;
+  --my: 50%;
+  --glow: 0;
+  position: relative;
+  padding: 1.5px;
+  transform-style: preserve-3d;
+  background: color-mix(in oklab, var(--color-ink) 8%, transparent);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.6s var(--ease-out-expo);
+  -webkit-tap-highlight-color: transparent;
+}
+.spot:hover {
+  box-shadow: var(--shadow-lift);
+}
+.spot::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    radial-gradient(260px circle at var(--mx) var(--my), rgb(91 216 224 / 0.95), transparent 60%),
+    conic-gradient(from var(--ang), transparent 0deg, transparent 250deg, rgb(91 216 224 / 0.55) 300deg, transparent 360deg);
+  opacity: calc(0.35 + var(--glow) * 0.65);
+  animation: spot-spin 9s linear infinite;
+  transition: opacity 0.5s ease;
+}
+[data-theme='dark'] .spot::before {
+  background:
+    radial-gradient(260px circle at var(--mx) var(--my), rgb(91 216 224 / 1), transparent 60%),
+    conic-gradient(from var(--ang), transparent 0deg, transparent 250deg, rgb(91 216 224 / 0.7) 300deg, transparent 360deg);
+}
+@keyframes spot-spin {
+  to {
+    --ang: 360deg;
+  }
+}
+.spot-inner {
+  position: relative;
+  overflow: hidden;
+  background: var(--color-surface);
+}
+.spot-inner::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgb(91 216 224 / 0.16), transparent 65%);
+  opacity: var(--glow);
+  transition: opacity 0.5s ease;
+  pointer-events: none;
+  z-index: 1;
+}
+[data-theme='dark'] .spot-inner::before {
+  background: radial-gradient(420px circle at var(--mx) var(--my), rgb(91 216 224 / 0.12), transparent 65%);
+}
+.spot-inner > * {
+  position: relative;
+  z-index: 2;
+}
+.spot-chip {
+  color: var(--color-teal-900);
+  background: color-mix(in oklab, var(--color-aqua-300) 30%, transparent);
+  transition: background 0.3s ease;
+}
+[data-theme='dark'] .spot-chip {
+  color: var(--color-aqua-300);
+  background: color-mix(in oklab, var(--color-aqua-300) 14%, transparent);
+}
+.spot:hover .spot-chip {
+  background: color-mix(in oklab, var(--color-aqua-300) 45%, transparent);
+}
+[data-theme='dark'] .spot:hover .spot-chip {
+  background: color-mix(in oklab, var(--color-aqua-300) 22%, transparent);
+}
+/* Icono con anillos que respiran */
+.spot-icon {
+  transition: transform 0.7s var(--ease-out-expo);
+}
+.spot:hover .spot-icon {
+  transform: translateY(-3px) rotate(-4deg);
+}
+.spot-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid color-mix(in oklab, var(--color-aqua-300) 70%, transparent);
+  opacity: 0;
+  animation: spot-breathe 2.6s ease-out infinite;
+}
+@keyframes spot-breathe {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+/* Marca de agua del diente (solo escritorio): motivo recurrente, lado alterno */
+.tooth-mark {
+  pointer-events: none;
+  position: absolute;
+  z-index: 0;
+  width: 24rem;
+  color: color-mix(in oklab, var(--color-teal-500) 7%, transparent);
+}
+[data-theme='dark'] .tooth-mark {
+  color: color-mix(in oklab, var(--color-aqua-300) 6%, transparent);
+}
+.tooth-mark.on-dark {
+  color: rgb(91 216 224 / 0.07);
+}
+.tooth-mark svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+@media (max-width: 1023px) {
+  .tooth-mark {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spot::before,
+  .spot-ring {
+    animation: none;
+  }
+  .spot,
+  .spot-icon,
+  .spot-chip {
+    transition: none;
+  }
+}
+
+/* ── Glass ──────────────────────────────────────────── */
+.glass {
+  background: rgb(255 255 255 / 0.1);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  border: 1px solid rgb(255 255 255 / 0.18);
+}
+
+/* ── Grain sutil para fondos oscuros ────────────────── */
+.grain::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ── FAQ accordion ──────────────────────────────────── */
+details.faq summary {
+  cursor: pointer;
+  list-style: none;
+}
+details.faq summary::-webkit-details-marker {
+  display: none;
+}
+details.faq .faq-icon {
+  transition: transform 0.4s var(--ease-out-expo);
+}
+details.faq[open] .faq-icon {
+  transform: rotate(45deg);
+}
+details.faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size 0.45s var(--ease-out-expo), content-visibility 0.45s allow-discrete;
+}
+details.faq[open]::details-content {
+  block-size: auto;
+}
+@supports (interpolate-size: allow-keywords) {
+  details.faq {
+    interpolate-size: allow-keywords;
+  }
+}
+
+/* Enlaces con subrayado animado */
+.link-under {
+  position: relative;
+}
+.link-under::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -3px;
+  width: 100%;
+  height: 1.5px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s var(--ease-out-expo);
+}
+.link-under:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}

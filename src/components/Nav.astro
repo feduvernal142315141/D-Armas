@@ -1,0 +1,455 @@
+---
+import { Image } from 'astro:assets';
+// Variante "nav": mismo logo con el tagline "Clínica Dental" más grande y con
+// más peso, para que se lea a tamaños pequeños (generado desde logo-*.svg).
+import logoBlanco from '../assets/brand/logo-nav-blanco.svg';
+import logoColor from '../assets/brand/logo-nav-color.svg';
+import tooth from '../assets/brand/tooth.svg?raw';
+import ThemeToggle from './ThemeToggle.astro';
+import LangSwitch from './LangSwitch.astro';
+import { clinica, waLink } from '../data/clinica';
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+const wa = waLink(t.whatsapp.cita);
+const m = t.contacto.mapa; // textos del estado "Abierto ahora"
+---
+
+<header id="nav" class="fixed inset-x-0 top-0 z-50 transition-[background,box-shadow] duration-500">
+  <nav class="mx-auto flex h-[68px] max-w-6xl items-center justify-between px-5 lg:h-[72px] lg:px-8" aria-label={t.nav.ariaPrincipal}>
+    <a href="#inicio" class="shrink-0" aria-label={clinica.nombre}>
+      <Image src={logoBlanco} alt={clinica.nombre} class="logo-light h-10 w-auto lg:h-12" loading="eager" />
+      <Image src={logoColor} alt="" aria-hidden="true" class="logo-dark hidden h-10 w-auto lg:h-12" loading="eager" />
+    </a>
+
+    <ul class="hidden items-center gap-6 lg:flex xl:gap-8">
+      {
+        t.nav.links.map((l) => (
+          <li>
+            <a href={l.href} class="link-under nav-link text-sm font-medium transition-colors">
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="flex items-center gap-1.5 sm:gap-2.5">
+      <div class="max-lg:hidden">
+        <LangSwitch />
+      </div>
+      <ThemeToggle />
+      <a href={wa} target="_blank" rel="noopener" class="btn btn-primary hidden !px-5 !py-2.5 text-sm sm:inline-flex">
+        {t.nav.agendar}
+      </a>
+      <button
+        id="menu-btn"
+        type="button"
+        class="menu-btn relative -mr-1 grid size-11 place-items-center rounded-full lg:hidden"
+        aria-expanded="false"
+        aria-controls="menu-overlay"
+        aria-label={t.nav.ariaAbrir}
+        data-label-abrir={t.nav.ariaAbrir}
+        data-label-cerrar={t.nav.ariaCerrar}
+      >
+        <span class="menu-line"></span>
+        <span class="menu-line"></span>
+      </button>
+    </div>
+  </nav>
+</header>
+
+<!-- ── Menú móvil a pantalla completa ──
+     Se revela con un clip-path circular desde la hamburguesa (GSAP); los títulos
+     salen de máscaras con stagger; la sección visible se marca como actual. -->
+<div
+  id="menu-overlay"
+  class="menu-overlay grain fixed inset-0 z-40 lg:hidden"
+  aria-hidden="true"
+  inert
+  data-lenis-prevent
+  data-abierto={m.abierto}
+  data-cerrado={m.cerrado}
+  data-cierra={m.cierra}
+  data-abre={m.abre}
+  data-hoy={m.hoy}
+  data-manana={m.manana}
+>
+  <div class="menu-bg absolute inset-0 -z-20"></div>
+  <div class="menu-aurora menu-aurora-a pointer-events-none absolute -z-10 rounded-full blur-[90px]"></div>
+  <div class="menu-aurora menu-aurora-b pointer-events-none absolute -z-10 rounded-full blur-[80px]"></div>
+  <!-- Marca de agua: el diente del logo -->
+  <div class="menu-tooth pointer-events-none absolute -bottom-8 -right-14 -z-10 w-[19rem]" set:html={tooth} />
+
+  <nav class="flex h-full flex-col overflow-y-auto px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[5.75rem]" aria-label={t.nav.ariaMenuMovil}>
+    <p class="menu-eyebrow flex items-center gap-3 font-mono text-[0.62rem] uppercase tracking-[0.24em]">
+      <span class="h-px w-7 bg-current opacity-60"></span>
+      {t.nav.menu}
+      <span class="menu-estado ml-auto inline-flex items-center gap-1.5 normal-case tracking-normal" data-menu-estado hidden>
+        <span class="menu-estado-dot size-1.5 rounded-full"></span>
+        <span data-menu-estado-texto></span>
+      </span>
+    </p>
+
+    <ul class="mt-5 flex-1">
+      {
+        t.nav.linksMovil.map((l, i) => (
+          <li class="menu-item">
+            <a href={l.href} class="menu-link flex items-center gap-4 py-[0.55rem]" data-section={l.href.replace('#', '')}>
+              <span class="menu-num w-5 font-mono text-[0.65rem] tracking-[0.2em]">0{i + 1}</span>
+              <span class="menu-mask block overflow-hidden">
+                <span class="menu-label block font-display text-[clamp(2.1rem,8.6vw,2.9rem)] font-medium leading-[1.08] tracking-[-0.022em]">
+                  {l.label}
+                </span>
+              </span>
+              <span class="menu-dot ml-auto size-1.5 shrink-0 rounded-full"></span>
+              <svg class="menu-arrow size-5 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M5 12h14" /><path d="m13 6 6 6-6 6" />
+              </svg>
+            </a>
+            <span class="menu-rule block h-px w-full origin-left"></span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="menu-foot mt-7">
+      <a href={wa} target="_blank" rel="noopener" class="menu-cta btn btn-primary w-full !py-4">
+        <svg class="size-5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.4 14.1c-.2.7-1.3 1.3-1.9 1.4-.5.1-1.1.1-1.8-.1a16 16 0 0 1-1.6-.6c-2.8-1.2-4.7-4.1-4.8-4.3-.1-.2-1.2-1.6-1.2-3s.7-2.1 1-2.4c.2-.3.5-.4.7-.4h.5c.2 0 .4 0 .6.4l.9 2.2c.1.2.1.4 0 .6l-.4.6-.5.5c-.2.2-.3.4-.1.7.1.3.7 1.2 1.6 1.9 1.1 1 2 1.3 2.3 1.4.3.1.5.1.7-.1l.9-1.1c.2-.3.4-.2.7-.1l2 .9c.3.2.5.3.6.4 0 .2 0 .7-.2 1.1Z"/></svg>
+        {t.barra.agendar}
+      </a>
+
+      <div class="mt-5 flex items-end justify-between gap-4">
+        <div class="min-w-0">
+          <a href={`tel:${clinica.telefono}`} class="menu-tel inline-flex items-center gap-2 text-sm font-semibold">
+            <svg class="size-4 shrink-0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.5v3a2 2 0 0 1-2.2 2A19.5 19.5 0 0 1 2.5 4.2 2 2 0 0 1 4.5 2h3a2 2 0 0 1 2 1.7c.13.96.36 1.9.68 2.8a2 2 0 0 1-.45 2.1L8.6 9.7a16 16 0 0 0 5.7 5.7l1.1-1.13a2 2 0 0 1 2.1-.45c.9.32 1.84.55 2.8.68a2 2 0 0 1 1.7 2Z"/></svg>
+            {clinica.telefonoDisplay}
+          </a>
+          <p class="menu-muted mt-1.5 text-xs">{t.nav.ubicacion}</p>
+        </div>
+        <div class="flex items-center gap-2" aria-label={t.nav.ariaRedes}>
+          <a href={clinica.facebook} target="_blank" rel="noopener" aria-label={t.cta.ariaFacebook} class="menu-social grid size-9 place-items-center rounded-full">
+            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M13.5 22v-8h2.7l.4-3.2h-3.1V8.7c0-.9.3-1.6 1.6-1.6h1.7v-2.9c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.4H7.4V14h2.7v8h3.4Z"/></svg>
+          </a>
+          <a href={clinica.tiktok} target="_blank" rel="noopener" aria-label={t.cta.ariaTiktok} class="menu-social grid size-9 place-items-center rounded-full">
+            <svg class="size-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M16.6 3c.4 2 1.7 3.4 3.9 3.6v3c-1.5 0-2.8-.5-3.9-1.3v6.3c0 3.5-2.5 5.9-5.7 5.9A5.6 5.6 0 0 1 5.2 15c0-3.3 2.7-5.7 6.1-5.5v3.1c-.3-.1-.7-.2-1.1-.2-1.5 0-2.7 1.2-2.7 2.7 0 1.6 1.2 2.8 2.7 2.8s2.8-1.2 2.8-2.9V3h3.6Z"/></svg>
+          </a>
+          <LangSwitch />
+        </div>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<style>
+  /* ── Colores adaptativos del nav (sin scroll) ──
+     Claro: logo a color y links tinta sobre el hero luminoso.
+     Oscuro: logo blanco y links claros sobre el hero profundo. */
+  .logo-light { display: none; }
+  .logo-dark { display: block; }
+  :global([data-theme='dark']) .logo-light { display: block; }
+  :global([data-theme='dark']) .logo-dark { display: none; }
+
+  .nav-link { color: color-mix(in oklab, var(--color-ink) 85%, transparent); }
+  .nav-link:hover { color: var(--color-teal-500); }
+  :global([data-theme='dark']) .nav-link { color: rgb(255 255 255 / 0.85); }
+  :global([data-theme='dark']) .nav-link:hover { color: #fff; }
+
+  /* ── Estado glass al hacer scroll ── */
+  #nav.scrolled {
+    background: rgb(255 255 255 / 0.82);
+    backdrop-filter: blur(16px) saturate(160%);
+    -webkit-backdrop-filter: blur(16px) saturate(160%);
+    box-shadow: 0 1px 0 rgb(4 58 66 / 0.08), 0 8px 24px -16px rgb(4 58 66 / 0.2);
+  }
+  #nav.scrolled .logo-light { display: none; }
+  #nav.scrolled .logo-dark { display: block; }
+  #nav.scrolled .nav-link { color: var(--color-ink); }
+  #nav.scrolled .nav-link:hover { color: var(--color-teal-500); }
+  #nav.scrolled .menu-line { background: var(--color-teal-900); }
+
+  /* Modo oscuro: glass oscuro y logo blanco también al hacer scroll */
+  :global([data-theme='dark']) #nav.scrolled {
+    background: rgb(9 32 38 / 0.85);
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.06), 0 8px 24px -16px rgb(0 0 0 / 0.6);
+  }
+  :global([data-theme='dark']) #nav.scrolled .logo-light { display: block; }
+  :global([data-theme='dark']) #nav.scrolled .logo-dark { display: none; }
+  :global([data-theme='dark']) #nav.scrolled .menu-line { background: #fff; }
+
+  /* Con el menú abierto, el header vuelve a transparente sobre el overlay.
+     Logo, hamburguesa y controles siguen las reglas del tema. */
+  :global(html.menu-open) #nav {
+    background: transparent;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none;
+  }
+
+  /* ── Hamburguesa → X (con anillo cuando está abierta) ── */
+  .menu-btn {
+    -webkit-tap-highlight-color: transparent;
+    transition: box-shadow 0.5s var(--ease-out-expo), transform 0.5s var(--ease-out-expo);
+  }
+  .menu-btn:active { transform: scale(0.92); }
+  :global(html.menu-open) .menu-btn {
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-ink) 22%, transparent);
+  }
+  .menu-line {
+    position: absolute;
+    width: 22px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--color-teal-900);
+    transition: transform 0.55s var(--ease-out-expo), background 0.3s;
+  }
+  :global([data-theme='dark']) .menu-line { background: #fff; }
+  .menu-line:nth-child(1) { transform: translateY(-4px); }
+  .menu-line:nth-child(2) { transform: translateY(4px); }
+  :global(html.menu-open) .menu-line:nth-child(1) { transform: rotate(45deg); }
+  :global(html.menu-open) .menu-line:nth-child(2) { transform: rotate(-45deg); }
+
+  /* ── Overlay: paleta por tema ──
+     Claro: la misma luz del hero (hielo → papel), tinta y acentos teal.
+     Oscuro: teal profundo de la marca, blanco y acentos aqua. */
+  .menu-overlay {
+    --m-bg: radial-gradient(60rem 50rem at 85% -10%, #c9e9ec 0%, #e6f3f4 45%, #f6fafa 80%, #ffffff 100%);
+    --m-text: var(--color-ink);
+    --m-muted: var(--color-ink-soft);
+    --m-num: var(--color-teal-500);
+    --m-accent: var(--color-teal-700);
+    --m-line: rgb(18 51 58 / 0.1);
+    --m-chip: rgb(18 51 58 / 0.07);
+    --m-glow-a: rgb(91 216 224 / 0.4);
+    --m-glow-b: rgb(27 152 166 / 0.22);
+    --m-tooth: rgb(27 152 166 / 0.1);
+    --m-grain: 0.035;
+    color: var(--m-text);
+    visibility: hidden;
+    clip-path: circle(0px at calc(100% - 2.75rem) 2.125rem);
+    will-change: clip-path;
+  }
+  :global([data-theme='dark']) .menu-overlay {
+    --m-bg: radial-gradient(60rem 50rem at 85% -10%, #0b7482 0%, #065663 45%, #043a42 80%, #032a30 100%);
+    --m-text: #fff;
+    --m-muted: rgb(255 255 255 / 0.6);
+    --m-num: rgb(91 216 224 / 0.8);
+    --m-accent: var(--color-aqua-300);
+    --m-line: rgb(255 255 255 / 0.1);
+    --m-chip: rgb(255 255 255 / 0.08);
+    --m-glow-a: rgb(91 216 224 / 0.16);
+    --m-glow-b: rgb(91 216 224 / 0.1);
+    --m-tooth: rgb(91 216 224 / 0.09);
+    --m-grain: 0.05;
+  }
+  .menu-overlay.is-open { visibility: visible; }
+  .menu-bg { background: var(--m-bg); }
+  .menu-overlay.grain::before { opacity: var(--m-grain); z-index: -5; }
+
+  /* Auroras: dos manchas de luz que derivan lentamente */
+  .menu-aurora-a {
+    width: 22rem; height: 22rem; right: -8rem; top: -6rem;
+    background: var(--m-glow-a);
+    animation: aurora-a 14s ease-in-out infinite alternate;
+  }
+  .menu-aurora-b {
+    width: 18rem; height: 18rem; left: -7rem; bottom: 6rem;
+    background: var(--m-glow-b);
+    animation: aurora-b 18s ease-in-out infinite alternate;
+  }
+  @keyframes aurora-a { to { transform: translate(-4rem, 5rem) scale(1.15); } }
+  @keyframes aurora-b { to { transform: translate(5rem, -4rem) scale(1.1); } }
+
+  .menu-tooth { color: var(--m-tooth); }
+  .menu-tooth :global(svg) { width: 100%; height: auto; display: block; }
+
+  /* ── Cabecera del menú ── */
+  .menu-eyebrow { color: var(--m-muted); }
+  .menu-estado { color: var(--m-muted); font-size: 0.68rem; }
+  .menu-estado-dot { background: var(--m-muted); }
+  .menu-estado.is-open .menu-estado-dot { background: #22c55e; box-shadow: 0 0 0 3px rgb(34 197 94 / 0.2); }
+  .menu-estado.is-closed .menu-estado-dot { background: #f59e0b; box-shadow: 0 0 0 3px rgb(245 158 11 / 0.2); }
+
+  /* ── Items ── */
+  .menu-link { -webkit-tap-highlight-color: transparent; position: relative; }
+  .menu-num { color: var(--m-num); }
+  /* GSAP escribe transform inline en .menu-label; el desplazamiento de hover va en la máscara */
+  .menu-mask { transition: transform 0.6s var(--ease-out-expo); }
+  .menu-label {
+    color: var(--m-text);
+    font-variation-settings: 'opsz' 144, 'SOFT' 30;
+    transition: color 0.3s ease;
+  }
+  .menu-rule { background: var(--m-line); }
+  .menu-dot {
+    background: var(--m-accent);
+    opacity: 0;
+    transform: scale(0.4);
+    transition: opacity 0.35s ease, transform 0.5s var(--ease-out-expo);
+  }
+  .menu-link[aria-current='true'] .menu-dot { opacity: 1; transform: scale(1); }
+  .menu-link[aria-current='true'] .menu-num { color: var(--m-accent); }
+  .menu-arrow {
+    color: var(--m-accent);
+    opacity: 0;
+    transform: translateX(-10px);
+    transition: opacity 0.3s ease, transform 0.5s var(--ease-out-expo);
+  }
+  .menu-link:hover .menu-label,
+  .menu-link:active .menu-label,
+  .menu-link:focus-visible .menu-label { color: var(--m-accent); }
+  .menu-link:hover .menu-mask,
+  .menu-link:active .menu-mask,
+  .menu-link:focus-visible .menu-mask { transform: translateX(6px); }
+  .menu-link:hover .menu-arrow,
+  .menu-link:active .menu-arrow,
+  .menu-link:focus-visible .menu-arrow { opacity: 1; transform: translateX(0); }
+  .menu-link:hover ~ .menu-rule,
+  .menu-link:active ~ .menu-rule { background: var(--m-accent); }
+  .menu-link:focus-visible { outline: none; }
+
+  /* Pantallas bajas (iPhone SE, landscape): compactar */
+  @media (max-height: 700px) {
+    .menu-label { font-size: clamp(1.7rem, 7vw, 2.2rem); }
+    .menu-link { padding-block: 0.4rem; }
+  }
+
+  /* ── Pie del menú ── */
+  .menu-cta { position: relative; overflow: hidden; }
+  /* Destello que recorre el botón cada pocos segundos */
+  .menu-cta::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.45) 50%, transparent 65%);
+    transform: translateX(-120%);
+    animation: cta-shine 4.5s var(--ease-out-expo) 1.8s infinite;
+    pointer-events: none;
+  }
+  @keyframes cta-shine { 0% { transform: translateX(-120%); } 30%, 100% { transform: translateX(120%); } }
+  .menu-tel { color: var(--m-text); transition: color 0.3s ease; }
+  .menu-tel svg { color: var(--m-accent); }
+  .menu-tel:hover, .menu-tel:active { color: var(--m-accent); }
+  .menu-muted { color: var(--m-muted); }
+  .menu-social {
+    color: var(--m-text);
+    background: var(--m-chip);
+    transition: background 0.3s ease, color 0.3s ease, transform 0.45s var(--ease-out-expo);
+  }
+  .menu-social:hover, .menu-social:active { color: var(--m-accent); transform: translateY(-2px); }
+
+  @media (prefers-reduced-motion: reduce) {
+    .menu-overlay { clip-path: none !important; opacity: 0; transition: opacity 0.2s, visibility 0s 0.2s; }
+    .menu-overlay.is-open { opacity: 1; transition: opacity 0.2s; }
+    .menu-aurora, .menu-cta::before { animation: none; }
+    .menu-line, .menu-label, .menu-arrow, .menu-dot, .menu-btn { transition: none !important; }
+  }
+</style>
+
+<script>
+  import { gsap } from 'gsap';
+  import { estadoApertura, textosDesde } from '../scripts/horario';
+
+  const btn = document.getElementById('menu-btn');
+  const overlay = document.getElementById('menu-overlay');
+  const root = document.documentElement;
+  const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (btn && overlay) {
+    const labels = overlay.querySelectorAll('.menu-label');
+    const nums = overlay.querySelectorAll('.menu-num');
+    const rules = overlay.querySelectorAll('.menu-rule');
+    const eyebrow = overlay.querySelector('.menu-eyebrow');
+    const foot = overlay.querySelectorAll('.menu-foot > *');
+    const tooth = overlay.querySelector('.menu-tooth');
+
+    // ── Timeline del contenido (se reproduce al revés para cerrar).
+    //    El círculo de revelado se anima aparte porque su origen depende de
+    //    dónde esté la hamburguesa en el momento de abrir. ──
+    let tl: gsap.core.Timeline | null = null;
+    if (!reduce) {
+      tl = gsap.timeline({ paused: true, defaults: { ease: 'expo.out' } });
+      tl.fromTo(tooth, { opacity: 0, scale: 0.85, rotate: -8, transformOrigin: '70% 70%' }, { opacity: 1, scale: 1, rotate: 0, duration: 1.6 }, 0.2)
+        .fromTo(eyebrow, { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.7 }, 0.35)
+        .fromTo(labels, { yPercent: 115, rotate: 5, transformOrigin: '0% 100%' }, { yPercent: 0, rotate: 0, duration: 1, stagger: 0.06 }, 0.3)
+        .fromTo(nums, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.7, stagger: 0.06 }, 0.42)
+        .fromTo(rules, { scaleX: 0 }, { scaleX: 1, duration: 1, stagger: 0.06 }, 0.42)
+        .fromTo(foot, { opacity: 0, y: 26 }, { opacity: 1, y: 0, duration: 0.9, stagger: 0.1 }, 0.65);
+    }
+    let cx = innerWidth - 44;
+    let cy = 34;
+
+    // ── Estado "Abierto ahora" en la cabecera del menú ──
+    const estado = overlay.querySelector<HTMLElement>('[data-menu-estado]');
+    const estadoTexto = overlay.querySelector<HTMLElement>('[data-menu-estado-texto]');
+    if (estado && estadoTexto) {
+      const { abierto, texto } = estadoApertura(root.lang || 'es', textosDesde(overlay));
+      estadoTexto.textContent = texto;
+      estado.classList.add(abierto ? 'is-open' : 'is-closed');
+      estado.hidden = false;
+    }
+
+    // ── Abrir / cerrar ──
+    const setMenu = (open: boolean) => {
+      if (open === root.classList.contains('menu-open')) return;
+      root.classList.toggle('menu-open', open);
+      btn.setAttribute('aria-expanded', String(open));
+      btn.setAttribute('aria-label', (open ? btn.dataset.labelCerrar : btn.dataset.labelAbrir) || '');
+      overlay.setAttribute('aria-hidden', String(!open));
+      overlay.toggleAttribute('inert', !open);
+
+      if (reduce) {
+        overlay.classList.toggle('is-open', open);
+        return;
+      }
+
+      gsap.killTweensOf(overlay);
+      if (open) {
+        // Origen del círculo: el centro de la hamburguesa; radio: hasta la esquina más lejana
+        const r = btn.getBoundingClientRect();
+        cx = r.left + r.width / 2;
+        cy = r.top + r.height / 2;
+        const radio = Math.hypot(Math.max(cx, innerWidth - cx), Math.max(cy, innerHeight - cy)) + 40;
+        overlay.classList.add('is-open');
+        gsap.fromTo(
+          overlay,
+          { clipPath: `circle(0px at ${cx}px ${cy}px)` },
+          { clipPath: `circle(${radio}px at ${cx}px ${cy}px)`, duration: 1.05, ease: 'expo.inOut' }
+        );
+        tl?.timeScale(1).play(0);
+      } else {
+        gsap.to(overlay, {
+          clipPath: `circle(0px at ${cx}px ${cy}px)`,
+          duration: 0.7,
+          ease: 'expo.inOut',
+          onComplete: () => overlay.classList.remove('is-open'),
+        });
+        tl?.timeScale(1.7).reverse();
+      }
+    };
+
+    btn.addEventListener('click', () => setMenu(!root.classList.contains('menu-open')));
+    overlay.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') setMenu(false);
+    });
+    // Si el viewport pasa a escritorio con el menú abierto, cerrarlo
+    window.matchMedia('(min-width: 1024px)').addEventListener('change', (e) => e.matches && setMenu(false));
+
+    // ── Sección actual: marca el enlace cuya sección cruza el centro de la pantalla ──
+    const links = [...overlay.querySelectorAll<HTMLAnchorElement>('.menu-link[data-section]')];
+    const secciones = links.map((l) => document.getElementById(l.dataset.section || '')).filter(Boolean) as HTMLElement[];
+    if ('IntersectionObserver' in window && secciones.length) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((en) => {
+            if (!en.isIntersecting) return;
+            links.forEach((l) => l.setAttribute('aria-current', l.dataset.section === en.target.id ? 'true' : 'false'));
+          });
+        },
+        { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+      );
+      secciones.forEach((s) => io.observe(s));
+    }
+  }
+</script>

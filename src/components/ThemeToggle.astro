@@ -1,0 +1,117 @@
+---
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+---
+
+<button
+  id="theme-toggle"
+  type="button"
+  class="theme-toggle relative grid size-11 place-items-center rounded-full transition-transform duration-500 hover:rotate-[18deg] active:scale-90"
+  aria-label={t.tema.activarOscuro}
+  data-label-dark={t.tema.activarOscuro}
+  data-label-light={t.tema.activarClaro}
+>
+  <svg class="size-[22px]" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+    <mask id="tt-moon-mask">
+      <rect width="24" height="24" fill="#fff"></rect>
+      <circle class="tt-mask" cx="30" cy="2" r="8" fill="#000"></circle>
+    </mask>
+    <circle class="tt-sun" cx="12" cy="12" r="5.5" fill="currentColor" mask="url(#tt-moon-mask)"></circle>
+    <g class="tt-rays" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+      <path d="M12 2v2.2"></path>
+      <path d="M12 19.8V22"></path>
+      <path d="M2 12h2.2"></path>
+      <path d="M19.8 12H22"></path>
+      <path d="m4.9 4.9 1.6 1.6"></path>
+      <path d="m17.5 17.5 1.6 1.6"></path>
+      <path d="m6.5 17.5-1.6 1.6"></path>
+      <path d="m19.1 4.9-1.6 1.6"></path>
+    </g>
+  </svg>
+</button>
+
+<style>
+  /* Tinta en claro (que en oscuro ya es clara). El menú móvil abierto sigue
+     la paleta del tema, así que no hace falta forzar color. */
+  .theme-toggle {
+    color: var(--color-ink);
+  }
+
+  /* Morph sol ↔ luna (propiedades geométricas SVG animables por CSS) */
+  .tt-sun {
+    transition: r 0.5s var(--ease-out-expo);
+  }
+  .tt-mask {
+    transition: cx 0.5s var(--ease-out-expo), cy 0.5s var(--ease-out-expo);
+  }
+  .tt-rays {
+    transform-origin: center;
+    transition: opacity 0.25s ease, transform 0.5s var(--ease-out-expo);
+  }
+  :global([data-theme='dark']) .tt-sun {
+    r: 8.5;
+  }
+  :global([data-theme='dark']) .tt-mask {
+    cx: 16.5;
+    cy: 5.5;
+  }
+  :global([data-theme='dark']) .tt-rays {
+    opacity: 0;
+    transform: rotate(45deg) scale(0.5);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .theme-toggle,
+    .tt-sun,
+    .tt-mask,
+    .tt-rays {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  const btn = document.getElementById('theme-toggle');
+  const root = document.documentElement;
+
+  const apply = (theme: string) => {
+    root.dataset.theme = theme;
+    localStorage.setItem('theme', theme);
+    btn?.setAttribute(
+      'aria-label',
+      (theme === 'dark' ? btn.dataset.labelLight : btn.dataset.labelDark) || ''
+    );
+    document
+      .querySelector('meta[name="theme-color"]')
+      ?.setAttribute('content', theme === 'dark' ? '#06191e' : '#065663');
+  };
+
+  btn?.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!document.startViewTransition || reduce) {
+      apply(next);
+      return;
+    }
+
+    // Barrido circular desde el botón hacia toda la página
+    const r = btn.getBoundingClientRect();
+    const x = r.left + r.width / 2;
+    const y = r.top + r.height / 2;
+    const radio = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+
+    const vt = document.startViewTransition(() => apply(next));
+    vt.ready.then(() => {
+      document.documentElement.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radio}px at ${x}px ${y}px)`] },
+        {
+          duration: 650,
+          easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          pseudoElement: '::view-transition-new(root)',
+        }
+      );
+    });
+  });
+</script>

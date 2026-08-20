@@ -1,0 +1,69 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { useT, asLocale } from '../i18n';
+
+const locale = asLocale(Astro.currentLocale);
+const t = useT(locale);
+const urlEs = getRelativeLocaleUrl('es', '/');
+const urlEn = getRelativeLocaleUrl('en', '/');
+---
+
+<nav class="lang-switch" aria-label={t.idioma.aria} data-active={locale}>
+  <a href={urlEs} class:list={['lang-opt', locale === 'es' && 'is-active']} aria-current={locale === 'es' ? 'page' : undefined}>ES</a>
+  <a href={urlEn} class:list={['lang-opt', locale === 'en' && 'is-active']} aria-current={locale === 'en' ? 'page' : undefined}>EN</a>
+</nav>
+
+<style>
+  .lang-switch {
+    position: relative;
+    display: inline-flex;
+    padding: 3px;
+    border-radius: 999px;
+    border: 1px solid color-mix(in oklab, var(--color-ink) 18%, transparent);
+    isolation: isolate;
+  }
+  :global([data-theme='dark']) .lang-switch {
+    border-color: rgb(255 255 255 / 0.25);
+  }
+  /* Píldora activa deslizante */
+  .lang-switch::before {
+    content: '';
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 3px;
+    width: calc(50% - 3px);
+    border-radius: 999px;
+    background: var(--color-aqua-300);
+    transition: translate 0.45s var(--ease-out-expo);
+    z-index: -1;
+  }
+  .lang-switch[data-active='en']::before {
+    translate: 100% 0;
+  }
+  .lang-opt {
+    display: grid;
+    place-items: center;
+    min-width: 2.4rem;
+    padding: 0.28rem 0.3rem;
+    border-radius: 999px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: color-mix(in oklab, var(--color-ink) 65%, transparent);
+    transition: color 0.3s ease;
+  }
+  :global([data-theme='dark']) .lang-opt {
+    color: rgb(255 255 255 / 0.65);
+  }
+  .lang-opt:hover {
+    color: var(--color-ink);
+  }
+  :global([data-theme='dark']) .lang-opt:hover {
+    color: #fff;
+  }
+  .lang-opt.is-active,
+  :global([data-theme='dark']) .lang-opt.is-active {
+    color: var(--color-teal-900);
+  }
+</style>

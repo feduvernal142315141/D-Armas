@@ -1,0 +1,119 @@
+---
+import '@fontsource-variable/inter';
+import '@fontsource-variable/fraunces';
+// Precarga de los dos archivos de fuente críticos (subset latin, eje wght):
+// el titular del hero es el LCP y así no espera a que el CSS descubra la fuente.
+import interWoff2 from '@fontsource-variable/inter/files/inter-latin-wght-normal.woff2?url';
+import frauncesWoff2 from '@fontsource-variable/fraunces/files/fraunces-latin-wght-normal.woff2?url';
+import '../styles/global.css';
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import { clinica } from '../data/clinica';
+import { useT, asLocale } from '../i18n';
+
+const locale = asLocale(Astro.currentLocale);
+const t = useT(locale);
+
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const urlEs = getAbsoluteLocaleUrl('es', '/');
+const urlEn = getAbsoluteLocaleUrl('en', '/');
+
+const schemaDentist = {
+  '@context': 'https://schema.org',
+  '@type': 'Dentist',
+  name: clinica.nombre,
+  url: canonical.href,
+  inLanguage: locale,
+  telephone: clinica.telefono,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: t.contacto.direccion,
+    addressLocality: 'Managua',
+    addressCountry: 'Nicaragua',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: clinica.geo.lat,
+    longitude: clinica.geo.lng,
+  },
+  openingHoursSpecification: [
+    {
+      '@type': 'OpeningHoursSpecification',
+      dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'],
+      opens: '08:30',
+      closes: '16:30',
+    },
+  ],
+  medicalSpecialty: 'Dentistry',
+  sameAs: [clinica.facebook, clinica.tiktok].filter(Boolean),
+  availableService: t.especialidades.items.map((e) => ({
+    '@type': 'MedicalProcedure',
+    name: e.nombre,
+  })),
+  employee: t.equipo.miembros.map((m) => ({
+    '@type': 'Person',
+    name: m.nombre,
+    jobTitle: m.especialidades.join(' · '),
+  })),
+};
+
+const schemaFaq = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  inLanguage: locale,
+  mainEntity: t.faq.items.map((f) => ({
+    '@type': 'Question',
+    name: f.pregunta,
+    acceptedAnswer: { '@type': 'Answer', text: f.respuesta },
+  })),
+};
+---
+
+<!doctype html>
+<html lang={locale}>
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Marca que hay JS antes del primer paint: los estados iniciales de
+      // animación solo se aplican si el script de animaciones va a ejecutarse.
+      document.documentElement.classList.add('js');
+      // Tema antes del primer paint: preferencia guardada o la del sistema.
+      document.documentElement.dataset.theme =
+        localStorage.getItem('theme') ||
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="preload" as="font" type="font/woff2" href={interWoff2} crossorigin />
+    <link rel="preload" as="font" type="font/woff2" href={frauncesWoff2} crossorigin />
+    <!-- El mapa (iframe perezoso) vive en google.com: resolver el DNS por adelantado es gratis -->
+    <link rel="dns-prefetch" href="https://www.google.com" />
+    <link rel="dns-prefetch" href="https://maps.gstatic.com" />
+    <title>{t.meta.title}</title>
+    <meta name="description" content={t.meta.description} />
+    <link rel="canonical" href={canonical.href} />
+    <link rel="alternate" hreflang="es" href={urlEs} />
+    <link rel="alternate" hreflang="en" href={urlEn} />
+    <link rel="alternate" hreflang="x-default" href={urlEs} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="sitemap" href="/sitemap-index.xml" />
+    <meta name="theme-color" content="#065663" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={t.meta.title} />
+    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:url" content={canonical.href} />
+    <meta property="og:image" content={new URL('/og.png', Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:locale" content={t.meta.ogLocale} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(schemaDentist)} />
+    <script type="application/ld+json" set:html={JSON.stringify(schemaFaq)} />
+  </head>
+  <body>
+    <slot />
+    <script>
+      import '../scripts/animations.ts';
+    </script>
+  </body>
+</html>
