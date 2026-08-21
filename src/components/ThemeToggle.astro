@@ -90,9 +90,20 @@ const t = useT(asLocale(Astro.currentLocale));
   btn?.addEventListener('click', () => {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
     const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    // En pantallas táctiles la View Transition obliga a rasterizar toda la
+    // página dos veces antes de animar: en móvil eso se nota como un congelón.
+    const touch = window.matchMedia('(pointer: coarse)').matches;
 
-    if (!document.startViewTransition || reduce) {
+    if (reduce) {
       apply(next);
+      return;
+    }
+
+    if (!document.startViewTransition || touch) {
+      // Fundido de color barato: sólo transiciones de color durante ~350 ms
+      root.classList.add('theme-fading');
+      apply(next);
+      window.setTimeout(() => root.classList.remove('theme-fading'), 400);
       return;
     }
 

@@ -32,8 +32,8 @@ const pad = (n: number) => String(n).padStart(2, '0');
   <div class="mx-auto grid max-w-6xl gap-14 px-5 py-16 sm:py-24 lg:grid-cols-2 lg:items-center lg:gap-20 lg:px-8 lg:py-32">
     <!-- ── Mosaico de la clínica ── -->
     <div class="relative">
-      <div class="pointer-events-none absolute -left-16 -top-16 -z-10 size-64 rounded-full bg-aqua-300/25 blur-[90px] dark:bg-aqua-300/10"></div>
-      <div class="pointer-events-none absolute -bottom-12 -right-10 -z-10 size-56 rounded-full bg-teal-500/15 blur-[80px] dark:bg-teal-500/20"></div>
+      <div class="pointer-events-none absolute -left-16 -top-16 -z-10 size-[24rem] rounded-full bg-radial-[closest-side] from-aqua-300/30 to-transparent dark:from-aqua-300/15"></div>
+      <div class="pointer-events-none absolute -bottom-12 -right-10 -z-10 size-[20rem] rounded-full bg-radial-[closest-side] from-teal-500/20 to-transparent dark:from-teal-500/25"></div>
 
       <!-- Cada celda lleva el reveal (GSAP escribe transform inline); el botón interior conserva su hover -->
       <div class="grid aspect-[4/5] grid-cols-6 grid-rows-3 gap-2.5 sm:gap-3">

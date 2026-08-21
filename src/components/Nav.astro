@@ -76,8 +76,8 @@ const m = t.contacto.mapa; // textos del estado "Abierto ahora"
   data-manana={m.manana}
 >
   <div class="menu-bg absolute inset-0 -z-20"></div>
-  <div class="menu-aurora menu-aurora-a pointer-events-none absolute -z-10 rounded-full blur-[90px]"></div>
-  <div class="menu-aurora menu-aurora-b pointer-events-none absolute -z-10 rounded-full blur-[80px]"></div>
+  <div class="menu-aurora menu-aurora-a pointer-events-none absolute -z-10 rounded-full"></div>
+  <div class="menu-aurora menu-aurora-b pointer-events-none absolute -z-10 rounded-full"></div>
   <!-- Marca de agua: el diente del logo -->
   <div class="menu-tooth pointer-events-none absolute -bottom-8 -right-14 -z-10 w-[19rem]" set:html={tooth} />
 
@@ -248,13 +248,13 @@ const m = t.contacto.mapa; // textos del estado "Abierto ahora"
 
   /* Auroras: dos manchas de luz que derivan lentamente */
   .menu-aurora-a {
-    width: 22rem; height: 22rem; right: -8rem; top: -6rem;
-    background: var(--m-glow-a);
+    width: 30rem; height: 30rem; right: -12rem; top: -10rem;
+    background: radial-gradient(closest-side, var(--m-glow-a), transparent);
     animation: aurora-a 14s ease-in-out infinite alternate;
   }
   .menu-aurora-b {
-    width: 18rem; height: 18rem; left: -7rem; bottom: 6rem;
-    background: var(--m-glow-b);
+    width: 26rem; height: 26rem; left: -11rem; bottom: 2rem;
+    background: radial-gradient(closest-side, var(--m-glow-b), transparent);
     animation: aurora-b 18s ease-in-out infinite alternate;
   }
   @keyframes aurora-a { to { transform: translate(-4rem, 5rem) scale(1.15); } }
