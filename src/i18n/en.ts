@@ -442,6 +442,93 @@ export const en: Dict = {
     },
   },
 
+  solicitud: {
+    eyebrow: 'Leave us your details',
+    titulo: 'Prefer that <em>we contact you</em>?',
+    sub: 'Tell us what you need and our team will reach out to arrange your consultation.',
+    alternativa: 'In a hurry? Message us on',
+    alternativaLlamar: 'or call us at',
+    nombre: 'Full name',
+    telefono: 'Phone',
+    correo: 'Email',
+    contactoAyuda: 'Leave us at least a phone number or an email.',
+    servicio: 'Service of interest',
+    servicioCargando: 'Loading services…',
+    servicioNinguno: 'Not sure yet',
+    mensaje: 'Message',
+    opcional: 'optional',
+    privacidadAntes: 'I have read and accept the',
+    privacidadLink: 'privacy policy',
+    promociones: 'I want to receive promotions and news from the clinic.',
+    enviar: 'Send my details',
+    enviando: 'Sending…',
+    reintentar: 'Retry',
+    exitoTitulo: 'We received your details!',
+    exitoTexto: 'The clinic will get in touch with you soon.',
+    noDisponibleTitulo: 'This form is not available right now',
+    noDisponibleTexto: 'Message us on WhatsApp or give us a call and we will assist you personally.',
+    errores: {
+      nombre: 'Enter your full name (2 to 120 characters).',
+      contacto: 'Enter a phone number or an email so we can reach you.',
+      telefono: 'The phone number is not valid: use 7 to 15 digits.',
+      correo: 'The email is not valid.',
+      mensaje: 'The message can be up to 1000 characters long.',
+      caracteres: 'Do not use the < or > symbols.',
+      privacidad: 'You must accept the privacy policy to send your details.',
+      revisa: 'Check the highlighted fields.',
+      validacion: 'We could not process your details. Check them and try again.',
+      captcha: 'We could not verify that you are a person. Please try again.',
+      captchaPendiente: 'Complete the security check before sending.',
+      limite: 'Too many attempts, please try again later.',
+      espera: 'You can try again in {s} s.',
+      red: 'We could not send your details. Check your connection and try again.',
+    },
+  },
+
+  privacidad: {
+    metaTitle: "Privacy policy | D'Armas Clínica Dental",
+    metaDescription: "How D'Armas Clínica Dental handles the details you leave in the contact form.",
+    titulo: 'Privacy policy',
+    version: 'Version',
+    volver: 'Back to home',
+    footerLink: 'Privacy policy',
+    secciones: [
+      {
+        titulo: 'Who we are',
+        parrafos: [
+          "D'Armas Clínica Dental, located in Altamira, Managua, Nicaragua, is responsible for the personal data you share with us through this site.",
+        ],
+      },
+      {
+        titulo: 'What data we collect',
+        parrafos: [
+          'When you complete the contact form we receive your name, your phone number or email, the service you are interested in and any message you choose to write.',
+          'We also record the page you sent the form from, the site you came from and the campaign tags in the address (for example, the post or ad that brought you here), so we know which channels help us reach our patients.',
+        ],
+      },
+      {
+        titulo: 'How we use it',
+        parrafos: [
+          'We use your data to contact you, answer your enquiry and arrange your appointment or consultation.',
+          'We will only send you promotions and news if you ticked the corresponding box. You can withdraw that consent at any time by writing to us.',
+        ],
+      },
+      {
+        titulo: 'Where it is stored and who it is shared with',
+        parrafos: [
+          'Your data is stored in the management system used by the clinic and only authorised staff can access it. To protect the form against automated submissions we may rely on a security verification service.',
+          'We do not sell or hand over your data to third parties for commercial purposes.',
+        ],
+      },
+      {
+        titulo: 'Your rights',
+        parrafos: [
+          'You can ask us at any time to access, correct or delete your data, or to stop receiving communications. To do so, message us on WhatsApp or call us at +505 8484 9885.',
+        ],
+      },
+    ],
+  },
+
   cta: {
     titulo: 'Your new smile starts <em>with a message</em>',
     sub: 'Book your consultation and discover how easy it is to put yourself in the hands of specialists.',

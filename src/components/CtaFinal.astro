@@ -2,10 +2,12 @@
 import { Image } from 'astro:assets';
 import logoBlanco from '../assets/brand/logo-nav-blanco.svg';
 import tooth from '../assets/brand/tooth.svg?raw';
+import { getRelativeLocaleUrl } from 'astro:i18n';
 import { clinica, waLink } from '../data/clinica';
 import { useT, asLocale } from '../i18n';
 
-const t = useT(asLocale(Astro.currentLocale));
+const locale = asLocale(Astro.currentLocale);
+const t = useT(locale);
 const wa = waLink(t.whatsapp.cita);
 const year = new Date().getFullYear();
 ---
@@ -55,7 +57,10 @@ const year = new Date().getFullYear();
       </div>
       <div class="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-6 text-sm text-white/40">
         <p>{t.contacto.direccion}, {t.contacto.ciudadPais}</p>
-        <p>© {year} {clinica.nombre}. {t.cta.derechos}</p>
+        <p>
+          © {year} {clinica.nombre}. {t.cta.derechos}
+          <a href={getRelativeLocaleUrl(locale, 'privacidad')} class="link-under ml-2 hover:text-white">{t.privacidad.footerLink}</a>
+        </p>
       </div>
     </div>
   </footer>

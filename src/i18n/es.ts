@@ -444,6 +444,93 @@ export const es = {
     },
   },
 
+  solicitud: {
+    eyebrow: 'Déjanos tus datos',
+    titulo: '¿Prefieres que <em>te contactemos</em>?',
+    sub: 'Cuéntanos qué necesitas y nuestro equipo se comunicará contigo para coordinar tu valoración.',
+    alternativa: '¿Tienes prisa? Escríbenos por',
+    alternativaLlamar: 'o llámanos al',
+    nombre: 'Nombre completo',
+    telefono: 'Teléfono',
+    correo: 'Correo electrónico',
+    contactoAyuda: 'Déjanos al menos un teléfono o un correo.',
+    servicio: 'Servicio de interés',
+    servicioCargando: 'Cargando servicios…',
+    servicioNinguno: 'Aún no lo sé',
+    mensaje: 'Mensaje',
+    opcional: 'opcional',
+    privacidadAntes: 'He leído y acepto la',
+    privacidadLink: 'política de privacidad',
+    promociones: 'Quiero recibir promociones y novedades de la clínica.',
+    enviar: 'Enviar mis datos',
+    enviando: 'Enviando…',
+    reintentar: 'Reintentar',
+    exitoTitulo: '¡Recibimos tus datos!',
+    exitoTexto: 'La clínica se pondrá en contacto contigo pronto.',
+    noDisponibleTitulo: 'Este formulario no está disponible por ahora',
+    noDisponibleTexto: 'Escríbenos por WhatsApp o llámanos y te atendemos personalmente.',
+    errores: {
+      nombre: 'Escribe tu nombre completo (entre 2 y 120 caracteres).',
+      contacto: 'Indica un teléfono o un correo para poder contactarte.',
+      telefono: 'El teléfono no es válido: usa entre 7 y 15 dígitos.',
+      correo: 'El correo no es válido.',
+      mensaje: 'El mensaje admite hasta 1000 caracteres.',
+      caracteres: 'No uses los símbolos < ni >.',
+      privacidad: 'Debes aceptar la política de privacidad para enviar tus datos.',
+      revisa: 'Revisa los campos marcados.',
+      validacion: 'No pudimos procesar tus datos. Revísalos e inténtalo de nuevo.',
+      captcha: 'No pudimos verificar que eres una persona. Inténtalo de nuevo.',
+      captchaPendiente: 'Completa la verificación de seguridad antes de enviar.',
+      limite: 'Demasiados intentos, inténtalo más tarde.',
+      espera: 'Podrás intentarlo de nuevo en {s} s.',
+      red: 'No pudimos enviar tus datos. Revisa tu conexión e inténtalo de nuevo.',
+    },
+  },
+
+  privacidad: {
+    metaTitle: "Política de privacidad | D'Armas Clínica Dental",
+    metaDescription: "Cómo D'Armas Clínica Dental trata los datos que nos dejas en el formulario de contacto.",
+    titulo: 'Política de privacidad',
+    version: 'Versión',
+    volver: 'Volver al inicio',
+    footerLink: 'Política de privacidad',
+    secciones: [
+      {
+        titulo: 'Quiénes somos',
+        parrafos: [
+          "D'Armas Clínica Dental, ubicada en Altamira, Managua, Nicaragua, es responsable de los datos personales que nos compartes a través de este sitio.",
+        ],
+      },
+      {
+        titulo: 'Qué datos recopilamos',
+        parrafos: [
+          'Cuando completas el formulario de contacto recibimos tu nombre, tu teléfono o tu correo electrónico, el servicio que te interesa y el mensaje que decidas escribir.',
+          'También registramos la página desde la que enviaste el formulario, el sitio desde el que llegaste y las etiquetas de campaña de la dirección (por ejemplo, la publicación o anuncio que te trajo), para saber qué canales nos ayudan a llegar a nuestros pacientes.',
+        ],
+      },
+      {
+        titulo: 'Para qué los usamos',
+        parrafos: [
+          'Usamos tus datos para contactarte, responder tu consulta y coordinar tu cita o valoración.',
+          'Solo te enviaremos promociones y novedades si marcaste la casilla correspondiente. Puedes retirar ese consentimiento en cualquier momento escribiéndonos.',
+        ],
+      },
+      {
+        titulo: 'Dónde se guardan y con quién se comparten',
+        parrafos: [
+          'Tus datos se guardan en el sistema de gestión que utiliza la clínica y solo accede a ellos el personal autorizado. Para proteger el formulario contra envíos automatizados podemos apoyarnos en un servicio de verificación de seguridad.',
+          'No vendemos ni cedemos tus datos a terceros con fines comerciales.',
+        ],
+      },
+      {
+        titulo: 'Tus derechos',
+        parrafos: [
+          'Puedes pedirnos en cualquier momento acceder a tus datos, corregirlos o eliminarlos, así como dejar de recibir comunicaciones. Para hacerlo, escríbenos por WhatsApp o llámanos al +505 8484 9885.',
+        ],
+      },
+    ],
+  },
+
   cta: {
     titulo: 'Tu nueva sonrisa empieza <em>con un mensaje</em>',
     sub: 'Agenda tu valoración y descubre lo fácil que es ponerte en manos de especialistas.',

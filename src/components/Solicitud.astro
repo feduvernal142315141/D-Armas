@@ -1,0 +1,223 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import { clinica, waLink } from '../data/clinica';
+import { useT, asLocale } from '../i18n';
+
+const locale = asLocale(Astro.currentLocale);
+const t = useT(locale);
+const s = t.solicitud;
+const wa = waLink(t.whatsapp.cita);
+const urlPrivacidad = getRelativeLocaleUrl(locale, 'privacidad');
+
+// Textos que el script necesita en tiempo de ejecución
+const textos = {
+  enviar: s.enviar,
+  enviando: s.enviando,
+  reintentar: s.reintentar,
+  servicioNinguno: s.servicioNinguno,
+  ...s.errores,
+};
+---
+
+<section id="solicitud" class="scroll-mt-24 bg-ice">
+  <div class="mx-auto grid max-w-6xl gap-12 px-5 py-16 sm:py-24 lg:grid-cols-[0.8fr_1.2fr] lg:px-8 lg:py-32">
+    <div>
+      <p class="eyebrow" data-reveal>{s.eyebrow}</p>
+      <h2 class="display mt-4 text-[clamp(2rem,4vw,3rem)]" data-reveal set:html={s.titulo} />
+      <p class="mt-5 text-ink-soft" data-reveal>{s.sub}</p>
+      <p class="mt-6 text-sm text-ink-soft" data-reveal>
+        {s.alternativa}{' '}
+        <a href={wa} target="_blank" rel="noopener" class="link-under font-semibold text-teal-500">WhatsApp</a>{' '}
+        {s.alternativaLlamar}{' '}
+        <a href={`tel:${clinica.telefono}`} class="link-under font-semibold text-teal-500">{clinica.telefonoDisplay}</a>.
+      </p>
+    </div>
+
+    <div class="rounded-3xl bg-surface p-6 shadow-card sm:p-8" data-solicitud data-textos={JSON.stringify(textos)} data-reveal data-delay="0.1">
+      <form class="grid gap-5 sm:grid-cols-2" novalidate data-solicitud-form>
+        <div class="campo sm:col-span-2">
+          <label for="sol-nombre">{s.nombre}</label>
+          <input id="sol-nombre" name="fullName" type="text" autocomplete="name" maxlength="120" required aria-describedby="sol-nombre-error" />
+          <p id="sol-nombre-error" class="campo-error" data-error-for="fullName" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label for="sol-telefono">{s.telefono}</label>
+          <input id="sol-telefono" name="phone" type="tel" inputmode="tel" autocomplete="tel" maxlength="30" placeholder="8888 8888" aria-describedby="sol-telefono-error sol-contacto-ayuda" />
+          <p id="sol-telefono-error" class="campo-error" data-error-for="phone" hidden></p>
+        </div>
+
+        <div class="campo">
+          <label for="sol-correo">{s.correo}</label>
+          <input id="sol-correo" name="email" type="email" inputmode="email" autocomplete="email" maxlength="254" aria-describedby="sol-correo-error sol-contacto-ayuda" />
+          <p id="sol-correo-error" class="campo-error" data-error-for="email" hidden></p>
+        </div>
+
+        <p id="sol-contacto-ayuda" class="-mt-2 text-xs text-ink-soft sm:col-span-2">{s.contactoAyuda}</p>
+
+        <div class="campo sm:col-span-2" data-solicitud-servicio>
+          <label for="sol-servicio">{s.servicio} <span class="campo-opcional">({s.opcional})</span></label>
+          <select id="sol-servicio" name="interestServiceId" disabled>
+            <option value="">{s.servicioCargando}</option>
+          </select>
+        </div>
+
+        <div class="campo sm:col-span-2">
+          <label for="sol-mensaje">{s.mensaje} <span class="campo-opcional">({s.opcional})</span></label>
+          <textarea id="sol-mensaje" name="message" rows="4" maxlength="1000" aria-describedby="sol-mensaje-error"></textarea>
+          <p id="sol-mensaje-error" class="campo-error" data-error-for="message" hidden></p>
+        </div>
+
+        <!-- Campo trampa para bots: una persona nunca lo ve ni lo llena -->
+        <div class="trampa" aria-hidden="true">
+          <label for="sol-website">Website</label>
+          <input id="sol-website" name="website" type="text" tabindex="-1" autocomplete="off" />
+        </div>
+
+        <div class="space-y-3 sm:col-span-2">
+          <div>
+            <label class="casilla">
+              <input name="acceptedPrivacyPolicy" type="checkbox" required aria-describedby="sol-privacidad-error" />
+              <span>
+                {s.privacidadAntes}{' '}
+                <a href={urlPrivacidad} target="_blank" class="font-semibold text-teal-500 underline underline-offset-2">{s.privacidadLink}</a>.
+              </span>
+            </label>
+            <p id="sol-privacidad-error" class="campo-error" data-error-for="acceptedPrivacyPolicy" hidden></p>
+          </div>
+          <label class="casilla">
+            <input name="marketingConsent" type="checkbox" />
+            <span>{s.promociones}</span>
+          </label>
+        </div>
+
+        <div class="sm:col-span-2" data-solicitud-captcha hidden></div>
+
+        <div class="flex flex-wrap items-center gap-x-5 gap-y-3 sm:col-span-2">
+          <button type="submit" class="btn btn-dark max-sm:w-full" data-solicitud-enviar>
+            <span>{s.enviar}</span>
+          </button>
+          <p class="min-w-0 flex-1 basis-56 text-sm font-medium text-red-700 dark:text-red-300" role="alert" data-solicitud-estado hidden></p>
+        </div>
+      </form>
+
+      <!-- Confirmación: reemplaza al formulario tras el 202 -->
+      <div class="py-8 text-center outline-none" role="status" tabindex="-1" data-solicitud-exito hidden>
+        <span class="mx-auto grid size-14 place-items-center rounded-full bg-ice text-teal-500 dark:text-aqua-300">
+          <svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+        </span>
+        <p class="display mt-5 text-2xl">{s.exitoTitulo}</p>
+        <p class="mt-3 text-ink-soft">{s.exitoTexto}</p>
+      </div>
+
+      <!-- Formulario apagado para la clínica o el entorno (404): contacto alternativo -->
+      <div class="py-8 text-center" data-solicitud-nodisponible hidden>
+        <p class="display text-2xl">{s.noDisponibleTitulo}</p>
+        <p class="mt-3 text-ink-soft">{s.noDisponibleTexto}</p>
+        <div class="mt-6 flex flex-wrap justify-center gap-3">
+          <a href={wa} target="_blank" rel="noopener" class="btn btn-dark">WhatsApp</a>
+          <a href={`tel:${clinica.telefono}`} class="btn btn-outline">{clinica.telefonoDisplay}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .campo label {
+    display: block;
+    margin-bottom: 0.4rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+  .campo-opcional {
+    font-weight: 400;
+    color: var(--color-ink-soft);
+  }
+  .campo input,
+  .campo select,
+  .campo textarea {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border-radius: 0.9rem;
+    font-size: 1rem; /* 16px: evita el zoom automático de iOS al enfocar */
+    color: var(--color-ink);
+    background: var(--color-paper);
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-ink) 14%, transparent);
+    transition: box-shadow 0.3s ease, background 0.3s ease;
+  }
+  .campo textarea {
+    display: block;
+    resize: vertical;
+    min-height: 6.5rem;
+  }
+  .campo input::placeholder {
+    color: color-mix(in oklab, var(--color-ink-soft) 60%, transparent);
+  }
+  .campo input:focus-visible,
+  .campo select:focus-visible,
+  .campo textarea:focus-visible {
+    outline: none;
+    background: var(--color-surface);
+    box-shadow: inset 0 0 0 2px var(--color-teal-500);
+  }
+  .campo [aria-invalid='true'] {
+    box-shadow: inset 0 0 0 2px #dc2626;
+  }
+  .campo select:disabled {
+    color: var(--color-ink-soft);
+  }
+  .campo-error {
+    margin-top: 0.4rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: #b91c1c;
+  }
+  :global([data-theme='dark']) .campo-error {
+    color: #fca5a5;
+  }
+
+  .casilla {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.7rem;
+    font-size: 0.9rem;
+    line-height: 1.45;
+    color: var(--color-ink-soft);
+    cursor: pointer;
+  }
+  .casilla input {
+    flex-shrink: 0;
+    width: 1.15rem;
+    height: 1.15rem;
+    margin-top: 0.1rem;
+    accent-color: var(--color-teal-700);
+  }
+  .casilla input:focus-visible {
+    outline: 2px solid var(--color-teal-500);
+    outline-offset: 2px;
+  }
+  .casilla input[aria-invalid='true'] {
+    outline: 2px solid #dc2626;
+    outline-offset: 2px;
+  }
+
+  /* Fuera de pantalla (no display:none, que algunos bots detectan) */
+  .trampa {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  button[disabled] {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+</style>
+
+<script>
+  import '../scripts/solicitud.ts';
+</script>

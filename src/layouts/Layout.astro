@@ -10,12 +10,21 @@ import { getAbsoluteLocaleUrl } from 'astro:i18n';
 import { clinica } from '../data/clinica';
 import { useT, asLocale } from '../i18n';
 
+interface Props {
+  title?: string;
+  description?: string;
+  /** Ruta de la página dentro de cada idioma (la portada por defecto) */
+  ruta?: string;
+}
+
 const locale = asLocale(Astro.currentLocale);
 const t = useT(locale);
+const { title = t.meta.title, description = t.meta.description, ruta = '/' } = Astro.props;
+const esPortada = ruta === '/';
 
 const canonical = new URL(Astro.url.pathname, Astro.site);
-const urlEs = getAbsoluteLocaleUrl('es', '/');
-const urlEn = getAbsoluteLocaleUrl('en', '/');
+const urlEs = getAbsoluteLocaleUrl('es', ruta);
+const urlEn = getAbsoluteLocaleUrl('en', ruta);
 
 const schemaDentist = {
   '@context': 'https://schema.org',
@@ -87,8 +96,8 @@ const schemaFaq = {
     <!-- El mapa (iframe perezoso) vive en google.com: resolver el DNS por adelantado es gratis -->
     <link rel="dns-prefetch" href="https://www.google.com" />
     <link rel="dns-prefetch" href="https://maps.gstatic.com" />
-    <title>{t.meta.title}</title>
-    <meta name="description" content={t.meta.description} />
+    <title>{title}</title>
+    <meta name="description" content={description} />
     <link rel="canonical" href={canonical.href} />
     <link rel="alternate" hreflang="es" href={urlEs} />
     <link rel="alternate" hreflang="en" href={urlEn} />
@@ -98,8 +107,8 @@ const schemaFaq = {
     <meta name="theme-color" content="#065663" />
 
     <meta property="og:type" content="website" />
-    <meta property="og:title" content={t.meta.title} />
-    <meta property="og:description" content={t.meta.description} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical.href} />
     <meta property="og:image" content={new URL('/og.png', Astro.site).href} />
     <meta property="og:image:width" content="1200" />
@@ -107,8 +116,14 @@ const schemaFaq = {
     <meta property="og:locale" content={t.meta.ogLocale} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <script type="application/ld+json" set:html={JSON.stringify(schemaDentist)} />
-    <script type="application/ld+json" set:html={JSON.stringify(schemaFaq)} />
+    {
+      esPortada && (
+        <>
+          <script type="application/ld+json" set:html={JSON.stringify(schemaDentist)} />
+          <script type="application/ld+json" set:html={JSON.stringify(schemaFaq)} />
+        </>
+      )
+    }
   </head>
   <body>
     <slot />
