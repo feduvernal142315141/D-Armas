@@ -1,0 +1,347 @@
+---
+import { clinica } from '../data/clinica';
+import { useT, asLocale } from '../i18n';
+
+const t = useT(asLocale(Astro.currentLocale));
+const r = t.reserva;
+---
+
+<!-- Reserva en línea: aparece tras enviar el formulario si la clínica la tiene activa.
+     Las listas (servicios, doctores, días, horas) las pinta src/scripts/reserva.ts -->
+<div class="reserva" data-reserva data-textos={JSON.stringify(r)} data-whatsapp={clinica.whatsapp} data-direccion={`${t.contacto.direccion}, ${t.contacto.ciudadPais}`} hidden>
+  <div class="mb-5" data-rv-cabecera hidden>
+    <div class="flex items-center justify-between gap-4">
+      <button type="button" class="rv-atras" data-rv-atras>
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+        {r.atras}
+      </button>
+      <p class="text-xs font-semibold text-ink-soft" data-rv-paso></p>
+    </div>
+    <div class="rv-progreso mt-3" aria-hidden="true"><span data-rv-barra></span></div>
+  </div>
+
+  <p class="rv-aviso mb-4" role="status" data-rv-aviso hidden>{r.expira}</p>
+
+  <div class="rv-error mb-4" role="alert" data-rv-error hidden>
+    <span data-rv-error-texto></span>
+    <button type="button" class="font-semibold underline underline-offset-2" data-rv-reintentar hidden>{r.reintentar}</button>
+  </div>
+
+  <div class="py-6 text-center" data-rv-vista="invitacion" hidden>
+    <span class="rv-check"><svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+    <h3 class="display mt-5 text-2xl outline-none" tabindex="-1" data-rv-gracias></h3>
+    <p class="mt-3 text-ink-soft">{r.invitacion}</p>
+    <div class="mt-7 flex flex-col items-center gap-3">
+      <button type="button" class="btn btn-dark max-sm:w-full" data-rv-agendar>{r.agendar}</button>
+      <button type="button" class="text-sm font-semibold text-ink-soft underline underline-offset-4" data-rv-llamenme>{r.llamenme}</button>
+    </div>
+  </div>
+
+  <div data-rv-vista="servicio" hidden>
+    <h3 class="rv-titulo" tabindex="-1">{r.tituloServicio}</h3>
+    <div class="mt-4 grid gap-2.5" data-rv-servicios></div>
+  </div>
+
+  <div data-rv-vista="doctor" hidden>
+    <h3 class="rv-titulo" tabindex="-1">{r.tituloDoctor}</h3>
+    <div class="mt-4 grid gap-2.5" data-rv-doctores></div>
+  </div>
+
+  <div data-rv-vista="fecha" hidden>
+    <h3 class="rv-titulo" tabindex="-1">{r.tituloFecha}</h3>
+    <div class="mt-4 flex items-center gap-1.5">
+      <button type="button" class="rv-flecha" aria-label={r.diasAnteriores} data-rv-anterior>
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>
+      </button>
+      <div class="rv-dias" data-rv-dias></div>
+      <button type="button" class="rv-flecha" aria-label={r.diasSiguientes} data-rv-siguiente>
+        <svg class="size-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>
+      </button>
+    </div>
+    <p class="mt-5 text-sm font-semibold first-letter:uppercase" data-rv-dia-titulo></p>
+    <div class="rv-horas mt-3" data-rv-horas></div>
+    <p class="mt-3 text-sm text-ink-soft" data-rv-sin-horarios hidden>{r.sinHorarios}</p>
+    <p class="mt-4 text-xs text-ink-soft" data-rv-zona></p>
+  </div>
+
+  <div data-rv-vista="confirmar" hidden>
+    <h3 class="rv-titulo" tabindex="-1">{r.tituloConfirmar}</h3>
+    <dl class="rv-resumen mt-4" data-rv-resumen></dl>
+    <button type="button" class="btn btn-dark mt-6 max-sm:w-full" data-rv-confirmar><span>{r.confirmar}</span></button>
+  </div>
+
+  <div class="py-2 text-center" data-rv-vista="reservada" hidden>
+    <span class="rv-check" data-rv-reservada-icono><svg class="size-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg></span>
+    <h3 class="display mt-5 text-2xl outline-none" tabindex="-1" data-rv-reservada-titulo></h3>
+    <p class="mt-4 text-xs font-semibold uppercase tracking-[0.18em] text-ink-soft">{r.lblReferencia}</p>
+    <p class="mt-1 font-display text-3xl font-medium tracking-wide text-teal-500 dark:text-aqua-300" data-rv-referencia></p>
+    <dl class="rv-resumen mt-6 text-left" data-rv-detalle></dl>
+    <button type="button" class="btn btn-dark mt-6 max-sm:w-full" data-rv-calendario>{r.calendario}</button>
+    <p class="mt-5 text-sm text-ink-soft">
+      {r.cambios}{' '}
+      <a target="_blank" rel="noopener" class="font-semibold text-teal-500 underline underline-offset-2" data-rv-wa>WhatsApp</a>.
+    </p>
+  </div>
+
+  <div class="py-8 text-center" data-rv-vista="final" hidden>
+    <h3 class="display text-2xl outline-none" tabindex="-1" data-rv-final-titulo></h3>
+    <p class="mt-3 text-ink-soft" data-rv-final-texto></p>
+    <a target="_blank" rel="noopener" class="btn btn-dark mt-6" data-rv-wa>WhatsApp</a>
+  </div>
+
+  <p class="mt-4 text-sm text-ink-soft" role="status" data-rv-cargando hidden>{r.cargando}</p>
+</div>
+
+<style is:global>
+  /* Global a propósito: las opciones se crean desde el script */
+  .reserva.is-loading [data-rv-vista] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+  .reserva [data-rv-vista] {
+    transition: opacity 0.25s ease;
+  }
+  .reserva button:focus-visible,
+  .reserva a:focus-visible {
+    outline: 2px solid var(--color-teal-500);
+    outline-offset: 2px;
+  }
+  .reserva button[disabled] {
+    cursor: not-allowed;
+  }
+  .rv-titulo {
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 520;
+    line-height: 1.2;
+    outline: none;
+  }
+  .rv-atras {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-teal-500);
+  }
+  .rv-progreso {
+    height: 4px;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-ink) 10%, transparent);
+    overflow: hidden;
+  }
+  .rv-progreso span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-teal-500);
+    transition: width 0.5s var(--ease-out-expo);
+  }
+  .rv-aviso,
+  .rv-error {
+    padding: 0.7rem 0.9rem;
+    border-radius: 0.8rem;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  .rv-aviso {
+    color: #92400e;
+    background: rgb(245 158 11 / 0.14);
+  }
+  .rv-error {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.8rem;
+    color: #b91c1c;
+    background: rgb(220 38 38 / 0.09);
+  }
+  [data-theme='dark'] .rv-aviso {
+    color: #fcd34d;
+  }
+  [data-theme='dark'] .rv-error {
+    color: #fca5a5;
+  }
+  .rv-check {
+    display: inline-grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    border-radius: 999px;
+    color: var(--color-teal-500);
+    background: var(--color-ice);
+  }
+  .rv-check.is-cancelada {
+    color: #b45309;
+  }
+
+  /* Tarjetas de servicio y doctor */
+  .rv-opcion {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    width: 100%;
+    padding: 0.85rem 1rem;
+    border-radius: 1rem;
+    text-align: left;
+    background: var(--color-paper);
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-ink) 12%, transparent);
+    transition: box-shadow 0.3s ease, background 0.3s ease, transform 0.45s var(--ease-out-expo);
+  }
+  .rv-opcion:hover {
+    transform: translateY(-1px);
+    box-shadow: inset 0 0 0 1.5px var(--color-teal-500);
+  }
+  .rv-opcion[aria-pressed='true'] {
+    background: var(--color-ice);
+    box-shadow: inset 0 0 0 2px var(--color-teal-500);
+  }
+  .rv-opcion-nombre {
+    font-weight: 600;
+    line-height: 1.3;
+  }
+  .rv-opcion-detalle {
+    margin-top: 0.1rem;
+    font-size: 0.8rem;
+    color: var(--color-ink-soft);
+  }
+  .rv-etiqueta {
+    margin-left: auto;
+    flex-shrink: 0;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: var(--color-teal-900);
+    background: color-mix(in oklab, var(--color-aqua-300) 45%, transparent);
+  }
+  [data-theme='dark'] .rv-etiqueta {
+    color: var(--color-aqua-300);
+    background: color-mix(in oklab, var(--color-aqua-300) 18%, transparent);
+  }
+  .rv-avatar {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2.75rem;
+    height: 2.75rem;
+    overflow: hidden;
+    border-radius: 999px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--color-teal-500);
+    background: var(--color-ice);
+  }
+  .rv-opcion[aria-pressed='true'] .rv-avatar {
+    background: var(--color-surface);
+  }
+  .rv-avatar img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  /* Tira de días y cuadrícula de horas */
+  .rv-flecha {
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    background: color-mix(in oklab, var(--color-ink) 7%, transparent);
+  }
+  .rv-flecha[disabled] {
+    opacity: 0.3;
+  }
+  .rv-dias {
+    display: grid;
+    flex: 1;
+    min-width: 0;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 0.3rem;
+  }
+  .rv-dia {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.1rem;
+    padding: 0.5rem 0;
+    border-radius: 0.8rem;
+    font-size: 0.68rem;
+    font-weight: 600;
+    text-transform: capitalize;
+    color: var(--color-ink-soft);
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  .rv-dia strong {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--color-ink);
+  }
+  .rv-dia:hover:not([disabled]) {
+    background: color-mix(in oklab, var(--color-ink) 7%, transparent);
+  }
+  .rv-dia[disabled] {
+    opacity: 0.32;
+  }
+  .rv-dia[aria-pressed='true'],
+  .rv-hora[aria-pressed='true'] {
+    color: #fff;
+    background: var(--color-teal-900);
+  }
+  .rv-dia[aria-pressed='true'] strong {
+    color: inherit;
+  }
+  [data-theme='dark'] .rv-dia[aria-pressed='true'],
+  [data-theme='dark'] .rv-hora[aria-pressed='true'] {
+    color: var(--color-teal-900);
+    background: var(--color-aqua-300);
+  }
+  .rv-horas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(5.6rem, 1fr));
+    gap: 0.5rem;
+  }
+  .rv-hora {
+    padding: 0.6rem 0.4rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    box-shadow: inset 0 0 0 1.5px color-mix(in oklab, var(--color-ink) 14%, transparent);
+    transition: box-shadow 0.3s ease, background 0.3s ease, color 0.3s ease;
+  }
+  .rv-hora:hover {
+    box-shadow: inset 0 0 0 1.5px var(--color-teal-500);
+  }
+
+  /* Resumen de la cita */
+  .rv-resumen {
+    border-radius: 1rem;
+    background: var(--color-paper);
+    padding: 0.3rem 1rem;
+  }
+  .rv-resumen > div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.7rem 0;
+    font-size: 0.9rem;
+  }
+  .rv-resumen > div + div {
+    border-top: 1px solid color-mix(in oklab, var(--color-ink) 9%, transparent);
+  }
+  .rv-resumen dt {
+    flex-shrink: 0;
+    color: var(--color-ink-soft);
+  }
+  .rv-resumen dd {
+    font-weight: 600;
+    text-align: right;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reserva * {
+      transition-duration: 0.01ms !important;
+    }
+  }
+</style>

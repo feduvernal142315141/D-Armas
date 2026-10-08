@@ -1,5 +1,6 @@
 ---
 import { getRelativeLocaleUrl } from 'astro:i18n';
+import Reserva from './Reserva.astro';
 import { clinica, waLink } from '../data/clinica';
 import { useT, asLocale } from '../i18n';
 
@@ -109,6 +110,8 @@ const textos = {
         <p class="display mt-5 text-2xl">{s.exitoTitulo}</p>
         <p class="mt-3 text-ink-soft">{s.exitoTexto}</p>
       </div>
+
+      <Reserva />
 
       <!-- Formulario apagado para la clínica o el entorno (404): contacto alternativo -->
       <div class="py-8 text-center" data-solicitud-nodisponible hidden>

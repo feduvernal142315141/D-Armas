@@ -5,6 +5,8 @@
 // Sin sesión ni cookies; la única cabecera es Content-Type.
 // ─────────────────────────────────────────────────────────────
 
+import { crearReserva } from './reserva';
+
 type Textos = Record<
   | 'enviar'
   | 'enviando'
@@ -75,6 +77,13 @@ function iniciar(raiz: HTMLElement) {
   let submissionId: string | null = null;
   let captchaToken: string | null = null;
   let captchaId: string | undefined;
+
+  const mostrarExito = () => {
+    form.hidden = true;
+    if (!exito) return;
+    exito.hidden = false;
+    exito.focus();
+  };
 
   const mostrarNoDisponible = () => {
     form.hidden = true;
@@ -262,12 +271,14 @@ function iniciar(raiz: HTMLElement) {
     enviando = false;
 
     if (res?.status === 202) {
+      // `booking` solo viene si la clínica toma reservas en línea
+      const datos = (await res.json().catch(() => null)) as {
+        booking?: { sessionToken: string; expiresAt: string } | null;
+      } | null;
+      setBoton(textos.enviar, false);
+      if (!reserva || !datos?.booking?.sessionToken) return mostrarExito();
       form.hidden = true;
-      if (exito) {
-        exito.hidden = false;
-        exito.focus();
-      }
-      return;
+      return reserva.abrir(datos.booking);
     }
 
     reiniciarCaptcha();
@@ -294,6 +305,23 @@ function iniciar(raiz: HTMLElement) {
     setEstado((mensajeServidor && error.message) || textos.validacion);
   };
 
+  // ── Reserva en línea (tras el envío, si la clínica la ofrece) ──
+  const zonaReserva = raiz.querySelector<HTMLElement>('[data-reserva]');
+  const reserva =
+    zonaReserva &&
+    crearReserva(zonaReserva, {
+      api: API,
+      alGracias: mostrarExito,
+      // Sesión vencida o inválida: el formulario conserva lo escrito
+      alFormulario: (aviso) => {
+        if (exito) exito.hidden = true;
+        form.hidden = false;
+        submissionId = null;
+        setBoton(textos.enviar, false);
+        setEstado(aviso ?? '');
+      },
+    });
+
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     enviar();
@@ -315,6 +343,9 @@ function iniciar(raiz: HTMLElement) {
   });
 
   if (!API || !SLUG) return mostrarNoDisponible();
+
+  // Al recargar con una sesión de reserva vigente se retoma donde quedó
+  if (reserva?.restaurar()) form.hidden = true;
 
   // El catálogo se pide al acercarse a la sección, no en cada visita
   if ('IntersectionObserver' in window) {
